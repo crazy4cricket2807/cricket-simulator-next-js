@@ -1,28 +1,26 @@
 import React, { useState } from "react";
 import FormInputBattingType from "../../components/form/FormInputBattingType";
+import FormInputBowlingType from "../../components/form/FormInputBowlingType";
 import FormInputTypeBasic from "../../components/form/FormInputTypeBasic";
 
 const Createplayer = () => {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    overNumbers: new Array(20).fill(0),
+  });
   const handleInputChange = (e, el) => {
     setFormData({ ...formData, [el]: e.target.value });
   };
+
+  const handleInputChangeOverNumbers = (e, index) => {
+    formData.overNumbers[index] = e.target.value;
+  };
+  const overs = new Array(20).fill(0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
   };
 
-  const bowlingStyles = [
-    "right-arm fast",
-    "right-arm medium",
-    "right-arm offbreak",
-    "right-arm legbreak",
-    "left-arm fast",
-    "left-arm medium",
-    "left-arm offbreak",
-    "left-arm legbreak",
-  ];
   return (
     <>
       <title>Create Player</title>
@@ -45,36 +43,135 @@ const Createplayer = () => {
               required
             />
             <FormInputBattingType handleInputChange={handleInputChange} />
+            <FormInputBowlingType handleInputChange={handleInputChange} />
             <div className="my-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2 text-left"
                 htmlFor={"bowlStyle"}
               >
-                Bowling Style
+                Batting Stats
               </label>
-              <div className="flex justify-around">
-                <select
-                  className="form-select appearance-none
-      block
-      w-full
-      px-3
-      py-1.5
-      text-base
-      font-normal
-      text-gray-700
-      bg-white bg-clip-padding bg-no-repeat
-      border border-solid border-gray-300
-      rounded
-      transition
-      ease-in-out
-      m-0
-      focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                  aria-label="Default select example"
+              <div className="flex justify-between gap-x-2">
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="number"
+                  placeholder="batRunsTotal"
+                  onChange={(e) =>
+                    setFormData({ ...formData, batRunsTotal: e.target.value })
+                  }
+                />
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="number"
+                  placeholder="batBallsTotal"
+                  onChange={(e) =>
+                    setFormData({ ...formData, batRunsTotal: e.target.value })
+                  }
+                />
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="number"
+                  placeholder="batOutsTotal"
+                  onChange={(e) =>
+                    setFormData({ ...formData, batRunsTotal: e.target.value })
+                  }
+                />
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="number"
+                  placeholder="catches"
+                  onChange={(e) =>
+                    setFormData({ ...formData, batRunsTotal: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <div className="my-4">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                htmlFor={"bowlStyle"}
+              >
+                Bowling Stats
+              </label>
+              <div className="flex justify-between gap-x-2">
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="number"
+                  placeholder="bowlRunsTotal"
+                  onChange={(e) =>
+                    setFormData({ ...formData, bowlRunsTotal: e.target.value })
+                  }
+                />
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="number"
+                  placeholder="bowlBallsTotal"
+                  onChange={(e) =>
+                    setFormData({ ...formData, bowlBallsTotal: e.target.value })
+                  }
+                />
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="number"
+                  placeholder="bowlOutsTotal"
+                  onChange={(e) =>
+                    setFormData({ ...formData, bowlOutsTotal: e.target.value })
+                  }
+                />
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="number"
+                  placeholder="bowlNoballs"
+                  onChange={(e) =>
+                    setFormData({ ...formData, bowlNoballs: e.target.value })
+                  }
+                />
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="number"
+                  placeholder="bowlWides"
+                  onChange={(e) =>
+                    setFormData({ ...formData, bowlWides: e.target.value })
+                  }
+                />
+              </div>
+              <div className="my-4">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                  htmlFor={"bowlStyle"}
                 >
-                  <option selected>Open this select menu</option>
-                  <option value="1">One</option>
-                  <option value="2">Two</option>
-                </select>
+                  Over Numbers
+                </label>
+                {overs.map((over, index) => (
+                  <div className="my-2">
+                    <label className="block text-gray-700 text-sm font-bold mb-2 text-left">
+                      {index + 1}
+                    </label>
+                    <input
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="username"
+                      type="number"
+                      placeholder={over}
+                      key={index}
+                      onChange={(e) => handleInputChangeOverNumbers(e, index)}
+                    />
+                  </div>
+                ))}
+                <FormInputTypeBasic
+                  label="Matches"
+                  placeholder="matches"
+                  handleInputChange={handleInputChange}
+                  required
+                />
               </div>
             </div>
             <button type="submit">submit</button>
