@@ -14,7 +14,7 @@ const FormInputBowlingType = ({ handleInputChange }) => {
   return (
     <div className="my-4">
       <label
-        className="block text-gray-700 text-sm font-bold mb-2 text-left"
+        className="block mb-2 text-sm font-bold text-left text-gray-700"
         htmlFor={"bowlStyle"}
       >
         Bowling Style
@@ -39,8 +39,10 @@ const FormInputBowlingType = ({ handleInputChange }) => {
           aria-label="Default select example"
           defaultValue="none"
           onChange={(e) => handleInputChange(e, "bowlStyle")}
-        >
-          <option selected>none</option>
+          >
+          <option value="none">
+            none
+          </option>
           {bowlingStyles.map((value, index) => (
             <option value={value} key={index}>
               {value}
