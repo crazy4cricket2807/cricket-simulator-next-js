@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 
-const FormInputTypeBasic = ({ label, placeholder, handleInputChange, ...props }) => {
+const FormInputTypeBasic = ({
+  label,
+  placeholder,
+  handleInputChange,
+  ...props
+}) => {
   return (
     <div className="my-4">
       <label
