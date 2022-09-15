@@ -5,26 +5,31 @@ import FormInputTypeBasic from "../../components/form/FormInputTypeBasic";
 
 const Createplayer = () => {
   const [formData, setFormData] = useState({
-    overNumbers: new Array(20).fill(0),
+    oversData: new Array(20).fill(0),
+    overNumbers: [],
   });
   const handleInputChange = (e, el) => {
     setFormData({ ...formData, [el]: e.target.value });
   };
 
   const handleInputChangeOverNumbers = (e, index) => {
-    formData.overNumbers[index] = e.target.value;
+    formData.oversData[index] = e.target.value;
   };
   const overs = new Array(20).fill(0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    formData.oversData.forEach((overData, index) => {
+      const curr = new Array(parseInt(overData)).fill(index + 1);
+      formData.overNumbers = formData.overNumbers.concat(curr);
+    });
     console.log(formData);
   };
 
   return (
     <>
       <title>Create Player</title>
-      <div className="text-center bg-gray-100 h-screen">
+      <div className="text-center bg-gray-100 h-full">
         <div className="py-8">
           <form
             className="bg-white shadow-md rounded px-8 py-8 mb-4 w-9/12 mx-auto"
@@ -152,7 +157,7 @@ const Createplayer = () => {
                   Over Numbers
                 </label>
                 {overs.map((over, index) => (
-                  <div className="my-2">
+                  <div className="my-2" key={index}>
                     <label className="block text-gray-700 text-sm font-bold mb-2 text-left">
                       {index + 1}
                     </label>
