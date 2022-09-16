@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
-    "mongodb": "^3.5.9",
+    "mongodb": "^3.7.3",
     "mongoose": "^6.6.1",
     "next": "12.2.5",
     "next-connect": "^0.13.0",

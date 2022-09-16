@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import FormInputBattingType from "../../components/form/FormInputBattingType";
 import FormInputBowlingType from "../../components/form/FormInputBowlingType";
 import FormInputTypeBasic from "../../components/form/FormInputTypeBasic";
-import { useRouter } from 'next/router'
-
 
 const Createplayer = () => {
   const [formData, setFormData] = useState({
@@ -43,8 +41,6 @@ const Createplayer = () => {
     formData.oversData[index] = e.target.value;
   };
 
-  const router = useRouter();
-  
   const resetFormData = () => {
     setFormData({
       playerInitials: "",
@@ -74,21 +70,22 @@ const Createplayer = () => {
       matches: "",
       oversData: new Array(20).fill(0),
       overNumbers: [],
-    })
-  }
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     formData.oversData.forEach((overData, index) => {
-      formData.overNumbers = formData.overNumbers.concat(new Array(parseInt(overData)).fill(index + 1));
+      formData.overNumbers = formData.overNumbers.concat(
+        new Array(parseInt(overData)).fill(index + 1)
+      );
     });
     let res = await fetch("http://localhost:5000/api/players", {
       method: "POST",
       body: JSON.stringify(formData),
     });
-    
 
-    router.push("/");
+    window.location.reload();
 
     resetFormData();
   };
@@ -223,7 +220,9 @@ const Createplayer = () => {
                 >
                   Over Numbers
                 </label>
-                {[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0].map((over, index) => (
+                {[
+                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                ].map((over, index) => (
                   <div className="my-2" key={index}>
                     <label className="block mb-2 text-sm font-bold text-left text-gray-700">
                       {index + 1}
