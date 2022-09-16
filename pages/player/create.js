@@ -2,36 +2,34 @@ import React, { useState } from "react";
 import FormInputBattingType from "../../components/form/FormInputBattingType";
 import FormInputBowlingType from "../../components/form/FormInputBowlingType";
 import FormInputTypeBasic from "../../components/form/FormInputTypeBasic";
-import { useRouter } from 'next/router'
-
 
 const Createplayer = () => {
   const [formData, setFormData] = useState({
     playerInitials: "",
     displayName: "",
-    batRunsTotal: "",
+    batRunsTotal: 0,
     batStyle: "",
     bowlStyle: "",
-    batRunsTotal: "",
-    batBallsTotal: "",
-    bowlRunsTotal: "",
-    bowlBallsTotal: "",
-    batOutsTotal: "",
-    bowlOutsTotal: "",
-    bowlNoballs: "",
-    bowlWides: "",
-    catches: "",
+    batRunsTotal: 0,
+    batBallsTotal: 0,
+    bowlRunsTotal: 0,
+    bowlBallsTotal: 0,
+    batOutsTotal: 0,
+    bowlOutsTotal: 0,
+    bowlNoballs: 0,
+    bowlWides: 0,
+    catches: 0,
     batOutTypes: {},
     bowlOutTypes: {},
     batRunDenominations: {},
     bowlRunDenominations: {},
-    runnedOut: "",
+    runnedOut: 0,
     position: [],
     byBatsman: {},
     byBowler: {},
     captained: "",
-    wicketkeeper: "",
-    matches: "",
+    wicketkeeper: false,
+    matches: 0,
     oversData: new Array(20).fill(0),
     overNumbers: [],
   });
@@ -40,55 +38,59 @@ const Createplayer = () => {
   };
 
   const handleInputChangeOverNumbers = (e, index) => {
-    formData.oversData[index] = e.target.value;
+    setFormData({
+      ...formData,
+      oversData: formData.oversData[parseInt(index)] = parseInt(
+        e.target.value
+      ),
+    });
   };
 
-  const router = useRouter();
-  
   const resetFormData = () => {
     setFormData({
       playerInitials: "",
       displayName: "",
-      batRunsTotal: "",
+      batRunsTotal: 0,
       batStyle: "",
       bowlStyle: "",
-      batRunsTotal: "",
-      batBallsTotal: "",
-      bowlRunsTotal: "",
-      bowlBallsTotal: "",
-      batOutsTotal: "",
-      bowlOutsTotal: "",
-      bowlNoballs: "",
-      bowlWides: "",
-      catches: "",
+      batRunsTotal: 0,
+      batBallsTotal: 0,
+      bowlRunsTotal: 0,
+      bowlBallsTotal: 0,
+      batOutsTotal: 0,
+      bowlOutsTotal: 0,
+      bowlNoballs: 0,
+      bowlWides: 0,
+      catches: 0,
       batOutTypes: {},
       bowlOutTypes: {},
       batRunDenominations: {},
       bowlRunDenominations: {},
-      runnedOut: "",
+      runnedOut: 0,
       position: [],
       byBatsman: {},
       byBowler: {},
       captained: "",
-      wicketkeeper: "",
-      matches: "",
+      wicketkeeper: false,
+      matches: 0,
       oversData: new Array(20).fill(0),
       overNumbers: [],
-    })
-  }
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     formData.oversData.forEach((overData, index) => {
-      formData.overNumbers = formData.overNumbers.concat(new Array(parseInt(overData)).fill(index + 1));
+      formData.overNumbers = formData.overNumbers.concat(
+        new Array(parseInt(overData)).fill(index + 1)
+      );
     });
     let res = await fetch("http://localhost:5000/api/players", {
       method: "POST",
       body: JSON.stringify(formData),
     });
-    
 
-    router.push("/");
+    location.reload();
 
     resetFormData();
   };
@@ -160,8 +162,30 @@ const Createplayer = () => {
                     setFormData({ ...formData, catches: e.target.value })
                   }
                 />
+                <div className="flex justify-start items-center">
+                  <input
+                    className="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+                    type="checkbox"
+                    value=""
+                    id="flexCheckChecked"
+                    checked={formData.wicketkeeper}
+                    onChange={() =>
+                      setFormData({
+                        ...formData,
+                        wicketkeeper: !formData.wicketkeeper,
+                      })
+                    }
+                  />
+                  <label
+                    className="form-check-label inline-block text-gray-800"
+                    htmlFor="flexCheckChecked"
+                  >
+                    Wicketkeeper
+                  </label>
+                </div>
               </div>
             </div>
+
             <div className="my-4">
               <label
                 className="block mb-2 text-sm font-bold text-left text-gray-700"
@@ -223,7 +247,9 @@ const Createplayer = () => {
                 >
                   Over Numbers
                 </label>
-                {[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0].map((over, index) => (
+                {[
+                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                ].map((over, index) => (
                   <div className="my-2" key={index}>
                     <label className="block mb-2 text-sm font-bold text-left text-gray-700">
                       {index + 1}
