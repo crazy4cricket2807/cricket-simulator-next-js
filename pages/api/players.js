@@ -10,7 +10,6 @@ export default async (req, res) => {
       const cricketers = await db.collection("cricketers").find({}).toArray();
       res.json({ status: 200, cricketers });
     case "POST":
-      console.log(req.body.data);
       let myPlayers = await db
         .collection("cricketers")
         .insertOne(req.body.data);
