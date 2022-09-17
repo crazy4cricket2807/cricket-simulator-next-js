@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import FormInputBattingType from "../../components/form/FormInputBattingType";
 import FormInputBowlingType from "../../components/form/FormInputBowlingType";
 import FormInputTypeBasic from "../../components/form/FormInputTypeBasic";
+import axios from "axios";
 
 const Createplayer = () => {
   const [formData, setFormData] = useState({
@@ -30,7 +31,7 @@ const Createplayer = () => {
     captained: "",
     wicketkeeper: false,
     matches: 0,
-    oversData: new Array(20).fill(0),
+    oversData: Array(20).fill(0),
     overNumbers: [],
   });
   const handleInputChange = (e, el) => {
@@ -38,12 +39,7 @@ const Createplayer = () => {
   };
 
   const handleInputChangeOverNumbers = (e, index) => {
-    setFormData({
-      ...formData,
-      oversData: formData.oversData[parseInt(index)] = parseInt(
-        e.target.value
-      ),
-    });
+    formData.oversData[parseInt(index)] = parseInt(e.target.value);
   };
 
   const resetFormData = () => {
@@ -85,10 +81,13 @@ const Createplayer = () => {
         new Array(parseInt(overData)).fill(index + 1)
       );
     });
-    let res = await fetch("http://localhost:5000/api/players", {
-      method: "POST",
-      body: JSON.stringify(formData),
-    });
+    await axios
+      .post("http://localhost:5000/api/players", {
+        data: formData,
+      })
+      .then((response) => {
+        console.log(response);
+      });
 
     location.reload();
 

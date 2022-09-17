@@ -1,31 +1,20 @@
-import clientPromise from "../../lib/mongodb";
+/* eslint-disable import/no-anonymous-default-export */
+import { connectToDatabase } from "../../util/mongodb";
 
-export default async function handler(req, res) {
-  const client = await clientPromise;
-  const db = client.db("players");
+export default async (req, res) => {
+  const { db } = await connectToDatabase();
+  console.log(req.method);
+
   switch (req.method) {
+    case "GET":
+      const cricketers = await db.collection("cricketers").find({}).toArray();
+      res.json({ status: 200, cricketers });
     case "POST":
-      let bodyObject = JSON.parse(req.body);
-      let myPlayers = await db.collection("cricketers").insertOne(bodyObject);
+      console.log(req.body.data);
+      let myPlayers = await db
+        .collection("cricketers")
+        .insertOne(req.body.data);
       res.json(myPlayers);
       break;
-    case "GET":
-      const allPlayers = await db.collection("cricketers").find({}).toArray();
-      res.json({ status: 200, data: allPlayers });
-      break;
   }
-}
-
-export async function getServerSideProps() {
-  let res = await fetch("http://localhost:5000/api/players", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  let allPlayers = await res.json();
-
-  return {
-    props: { allPlayers },
-  };
-}
+};
