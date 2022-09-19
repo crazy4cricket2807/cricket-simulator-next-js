@@ -1,64 +1,85 @@
-import axios from 'axios';
-import React, { useState } from 'react';
-import { getTeams } from '../teams/IPL';
-export default function game() {
-    const [teams, setTeams] = useState({
-        team1: "",
-        team2: ""
-    })
+import React, { useState, useEffect } from "react";
+import { getTeamById } from "./../redux/actions/teamActions";
+import { useDispatch, useSelector } from "react-redux";
+import { getPlayers } from "./../redux/actions/playerActions";
+export default function Game() {
+  const [teams, setTeams] = useState({
+    team1: "",
+    team2: "",
+  });
 
-    const [teamsData, setTeamsData] = useState({ team1Data: [], team2Data: [] })
+  const team1 = useSelector((state) => state.teamReducer[0]);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(teams);
+  const team2 = useSelector((state) => state.teamReducer[1]);
 
-        const team1Info = getTeams(teams.team1)
-        const team2Info = getTeams(teams.team2)
+  const dispatch = useDispatch();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        setTeamsData({
-            ...teamsData, team1Data: team1Info.map(async (player) => {
-                const res = await axios.post(`http://localhost:5000/api/player/${player}`)
-                teamsData.team1Data.push(res.data.data[0])
-            })
-        })
-        setTeamsData({
-            ...teamsData, team2Data: team2Info.map(async (player) => {
-                const res = await axios.post(`http://localhost:5000/api/player/${player}`)
-                teamsData.team2Data.push(res.data.data[0])
-            })
-        })
+    dispatch(getTeamById(teams.team1));
+    dispatch(getTeamById(teams.team2));
 
-        console.log(teamsData)
+    dispatch(getPlayers(team1.team, team1.players));
+    dispatch(getPlayers(team2.team, team2.players));
+    
+  };
 
-    }
-    return (
-        <>
-            <title>Game</title>
-            <div className='bg-gray-100 h-screen text-center items-center my-auto'>
-                <form onSubmit={handleSubmit}>
-                    <div className='flex justify-center gap-x-10 items-center'>
-                        <div className="mb-4 my-10 text-left">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="team1">
-                                Team 1
-                            </label>
-                            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="team1" type="text" placeholder="team1" name="team1" onChange={(e) => setTeams({ ...teams, [e.target.name]: e.target.value })} />
-                        </div>
-                        <div className="mb-4 my-10 text-left">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="team2">
-                                Team 2
-                            </label>
-                            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="team2" type="text" placeholder="team2" name="team2" onChange={(e) => setTeams({ ...teams, [e.target.name]: e.target.value })} />
-                        </div>
-                    </div>
-                    <div className="text-right w-2/3">
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" type='submit'>
-                            Submit
-                        </button>
-                    </div>
-                </form>
+  useEffect(() => {
+  }, [team1, team2]);
 
-            </div>
-        </>
-    );
+  return (
+    <>
+      <title>Game</title>
+      <div className="bg-gray-100 h-screen flex justify-center items-center">
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4 py-10 text-left">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="team1"
+            >
+              Team 1
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="team1"
+              type="text"
+              placeholder="team1"
+              name="team1"
+              onChange={(e) =>
+                setTeams({ ...teams, [e.target.name]: e.target.value })
+              }
+              required
+            />
+          </div>
+          <div className="mb-4 my-10 text-left">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="team2"
+            >
+              Team 2
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="team2"
+              type="text"
+              placeholder="team2"
+              name="team2"
+              onChange={(e) =>
+                setTeams({ ...teams, [e.target.name]: e.target.value })
+              }
+              required
+            />
+          </div>
+          <div className="text-right">
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+              type="submit"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
+  );
 }
