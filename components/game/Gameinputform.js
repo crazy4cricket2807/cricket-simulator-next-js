@@ -13,7 +13,11 @@ function Gameinputform({ incrementSteps }) {
     setTeams({});
   };
 
-  useEffect(() => {}, []);
+  
+
+  useEffect(() => {
+    
+  }, []);
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex justify-center gap-x-10 items-center">
