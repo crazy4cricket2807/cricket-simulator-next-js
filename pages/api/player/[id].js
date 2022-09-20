@@ -9,6 +9,5 @@ export default async (req, res) => {
     .collection("cricketers")
     .find({ displayName: req.query.id }).toArray();
 
-  console.log(player);
   res.json({ status: 200, data: player });
 };

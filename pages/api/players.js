@@ -3,8 +3,6 @@ import { connectToDatabase } from "../../util/mongodb";
 
 export default async (req, res) => {
   const { db } = await connectToDatabase();
-  console.log(req.method);
-
   switch (req.method) {
     case "GET":
       const cricketers = await db.collection("cricketers").find({}).toArray();

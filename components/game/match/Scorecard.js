@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import miLogo from "../../../styles/images/mi.jpg";
 import cskLogo from "../../../styles/images/csk.jpg";
+import { useSelector } from "react-redux";
 
 function Scorecard() {
+  const teams = useSelector((state) => state.playerReducer);
+  useEffect(() => {
+    console.log(teams);
+  }, [teams]);
   return (
     <div className="bg-white w-full flex justify-between">
       <div className="flex justify-between items-center w-1/3">

@@ -23,7 +23,7 @@ export default function (req, res) {
           res.status(200).json({
             data: [
               "Murali Vijay",
-              "Faf du Plesis",
+              "Faf du Plessis",
               "Robin Uthappa",
               "Moeen Ali",
               "Ambati Rayudu",
