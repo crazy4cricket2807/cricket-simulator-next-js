@@ -1,7 +1,6 @@
 import React from "react";
 import Deliverycard from "./Deliverycard";
 import Scorecard from "./Scorecard";
-import { Delay } from "react-delay-fallback";
 
 function Match() {
   const results = ["0", "1", "2", "3", "4", "5", "6", "W"];

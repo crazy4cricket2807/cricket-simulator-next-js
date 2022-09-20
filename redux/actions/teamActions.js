@@ -4,5 +4,8 @@ import { GET_TEAM } from "../../constants";
 export const getTeamById = (id) => async (dispatch) => {
   const { data } = await axios.get(`http://localhost:5000/api/teams/${id}`);
 
-  dispatch({ type: GET_TEAM, payload: { team: id, players: data.data } });
+  return dispatch({
+    type: GET_TEAM,
+    payload: { team: id, players: data.data },
+  });
 };
