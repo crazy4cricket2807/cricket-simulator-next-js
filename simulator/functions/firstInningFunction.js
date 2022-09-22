@@ -10,6 +10,7 @@ let batter2;
 let lastOver;
 let openingBowlers;
 let middleBowlers;
+let onStrike;
 let deathBowlers;
 let currBowler;
 let runRate;
@@ -76,67 +77,15 @@ const getDeathBowler = (bowler) => {
 const getMiddleBowler = (bowler) => {
   let bowlerToReturn;
   let valid = false;
-  console.log(bowler);
 
-  while (!valid) {
-    if (
-      bowler.balls < 24 &&  
-      (bowler.runs / bowler.balls < 1.5 ||
-      bowler.wickets / bowler.balls > 0.08)
-    ) {
-      valid = true;
-      bowlerToReturn = bowler;
-    } else {
-      valid = false;
-      let pickIndex = 0;
-      let pick = middleBowlers[pickIndex % 6];
-      if (pick.balls < 19) {
-        if (pick.balls === 0) {
-          bowlerToReturn = pick;
-          valid = true;
-        } else if (pickIndex > 5) {
-          if (lastOver !== pick.playerInitials) {
-            bowlerToReturn = pick;
-            valid = true;
-          } else {
-            pickIndex += 1;
-          }
-        } else if (
-          pick.wickets / pick.balls > 0.08 ||
-          pick.runs / pick.balls < 1.5
-        ) {
-          if (lastOver !== pick.playerInitials) {
-            bowlerToReturn = pick;
-            valid = true;
-          } else {
-            pickIndex += 1;
-          }
-        } else {
-          pickIndex += 1;
-        }
-      } else {
-        pickIndex += 1;
-      }
-    }
+  if(bowler.playerInitials !== lastOver){
+    
   }
-
-  if (bowlerToReturn.balls === 0) {
-    console.log(bowlerToReturn.playerInitials, " comes into the attack");
-  } else {
-    console.log(
-      bowlerToReturn.playerInitials,
-      ` ${Math.floor(bowlerToReturn.balls / 6)}-0-${bowlerToReturn.runs}-${
-        bowlerToReturn.wickets
-      }`
-    );
-  }
-  return bowlerToReturn;
 };
 
 const getPowerplayBowler = (bowler) => {
   let bowlerToReturn;
   let valid = false;
-  console.log(bowler);
 
   while (!valid) {
     if (
@@ -207,13 +156,13 @@ const playerDismissed = (player) => {
   }
 };
 
-const delivery = (overBowler, onStrike, over) => {
+const delivery = (over) => {
   console.log(
-    `${over} ${overBowler.playerInitials} to ${onStrike.playerInitials}`
+    `${over} ${currBowler.playerInitials} to ${onStrike.playerInitials}`
   );
   balls += 1;
   const { playerInitials: batterName } = onStrike;
-  const { playerInitials: bowlerName } = overBowler;
+  const { playerInitials: bowlerName } = currBowler;
   const bowlerIndex = bowlingTracker.findIndex(
     (bowler) => bowler.playerInitials === bowlerName
   );
@@ -222,6 +171,195 @@ const delivery = (overBowler, onStrike, over) => {
   );
 
   bowlingTracker[bowlerIndex].balls += 1;
+};
+
+export const firstInnings = (batting, bowling) => {
+  for (const batter of batting) {
+    battingTracker = [
+      ...battingTracker,
+      {
+        playerInitials: batter.playerInitials,
+        balls: 0,
+        runs: 0,
+        ballLog: [],
+        batOutsRate: batter.batOutsTotal / batter.batBallsTotal,
+      },
+    ];
+  }
+  for (const bowler of bowling) {
+    bowlingTracker = [
+      ...bowlingTracker,
+      {
+        playerInitials: bowler.playerInitials,
+        balls: 0,
+        runs: 0,
+        ballLog: [],
+        overs: 0,
+        wickets: 0,
+        openingOverRate:
+          bowler.oversData[0] /
+          (bowler.oversData[0] + bowler.oversData[9] + bowler.oversData[18]),
+        middleOverRate:
+          bowler.oversData[9] /
+          (bowler.oversData[0] + bowler.oversData[9] + bowler.oversData[18]),
+        deathOverRate:
+          bowler.oversData[18] /
+          (bowler.oversData[0] + bowler.oversData[9] + bowler.oversData[18]),
+        catchRate: bowler.catches / bowler.matches,
+        wideRate: bowler.bowlWides / (bowler.bowlBallsTotal + 1),
+        bowlOutsTotal: bowler.bowlOutsTotal,
+        bowlOutsRate: bowler.bowlOutsTotal / bowler.matches,
+        overNumbersObject: bowler.oversData,
+      },
+    ];
+  }
+
+  console.log(bowlingTracker);
+
+  const bowlers = [...bowlingTracker].sort(
+    (a, b) => b.bowlOutsTotal - a.bowlOutsTotal
+  );
+
+  bowlers.splice(6);
+
+  bowlers.forEach((bowler) => {
+    bowler.openingOverRate =
+      bowler.bowlOutsRate *
+      (bowler.overNumbersObject[0] /
+        (bowler.overNumbersObject[0] +
+          bowler.overNumbersObject[9] +
+          bowler.overNumbersObject[18]));
+
+    bowler.middleOverRate =
+      bowler.bowlOutsRate *
+      (bowler.overNumbersObject[9] /
+        (bowler.overNumbersObject[0] +
+          bowler.overNumbersObject[9] +
+          bowler.overNumbersObject[18]));
+    bowler.deathOverRate =
+      bowler.bowlOutsRate *
+      (bowler.overNumbersObject[18] /
+        (bowler.overNumbersObject[0] +
+          bowler.overNumbersObject[9] +
+          bowler.overNumbersObject[18]));
+  });
+
+  openingBowlers = [...bowlers].sort(
+    (a, b) => b.openingOverRate - a.openingOverRate
+  );
+  middleBowlers = [...bowlers].sort(
+    (a, b) => b.middleOverRate - a.middleOverRate
+  );
+
+  deathBowlers = [...bowlers].sort((a, b) => b.deathOverRate - a.deathOverRate);
+
+  let i = 0;
+
+  console.log(openingBowlers, middleBowlers, deathBowlers);
+
+  batter1 = battingTracker[0];
+  batter2 = battingTracker[1];
+  onStrike = batter1;
+
+  let bowler1 = openingBowlers[0];
+  let bowler2 = openingBowlers[1];
+
+  console.log(batter1, batter2);
+
+  while (i < 20) {
+    if (i !== 0) {
+      onStrike =
+        onStrike.playerInitials === batter1.playerInitials ? batter2 : batter1;
+    }
+    if (i === 0) {
+      currBowler = bowler1;
+      let n = 0;
+      console.log(currBowler.playerInitials, " comes into the attack");
+
+      while (balls < 6) {
+        if (wickets === 10) {
+          break;
+        } else {
+          delivery(`${i}.${n + 1}`);
+          n++;
+        }
+        lastOver = currBowler.playerInitials;
+      }
+    } else if (i === 1) {
+      currBowler = bowler2;
+      let n = 0;
+      console.log(currBowler.playerInitials, " comes into the attack");
+
+      while (balls < 12) {
+        if (wickets === 10) {
+          break;
+        } else {
+          delivery(`${i}.${n + 1}`);
+          n++;
+        }
+      }
+      lastOver = currBowler.playerInitials;
+    } else if (i < 6) {
+      if (i % 2 === 1) {
+        bowler2 = getPowerplayBowler(bowler2);
+        currBowler = bowler2;
+      } else {
+        bowler1 = getPowerplayBowler(bowler1);
+        currBowler = bowler1;
+      }
+      let n = 0;
+
+      while (balls < (i + 1) * 6) {
+        if (wickets === 10) {
+          break;
+        } else {
+          delivery(`${i}.${n + 1}`);
+          n++;
+        }
+      }
+      lastOver = currBowler.playerInitials;
+    } else if (i < 15) {
+      if (i % 2 === 1) {
+        bowler2 = getMiddleBowler(bowler2);
+        currBowler = bowler2;
+      } else {
+        bowler1 = getMiddleBowler(bowler1);
+        currBowler = bowler1;
+      }
+      console.log(bowler1, bowler2);
+      let n = 0;
+
+      while (balls < (i + 1) * 6) {
+        if (wickets === 10) {
+          break;
+        } else {
+          delivery(`${i}.${n + 1}`);
+          n++;
+        }
+      }
+      lastOver = currBowler.playerInitials;
+    } else {
+      if (i % 2 === 1) {
+        bowler2 = getDeathBowler(bowler2);
+        currBowler = bowler2;
+      } else {
+        bowler1 = getDeathBowler(bowler1);
+        currBowler = bowler1;
+      }
+      let n = 0;
+
+      while (balls < (i + 1) * 6) {
+        if (wickets === 10) {
+          break;
+        } else {
+          delivery(`${i}.${n + 1}`);
+          n++;
+        }
+      }
+      lastOver = currBowler.playerInitials;
+    }
+    i++;
+  }
 };
 
 // const delivery = (overBowler, onStrike, over) => {
@@ -590,190 +728,3 @@ const delivery = (overBowler, onStrike, over) => {
 //     }
 //   }
 // };
-export const firstInnings = (batting, bowling) => {
-  for (const batter of batting) {
-    battingTracker = [
-      ...battingTracker,
-      {
-        playerInitials: batter.playerInitials,
-        balls: 0,
-        runs: 0,
-        ballLog: [],
-        batOutsRate: batter.batOutsTotal / batter.batBallsTotal,
-      },
-    ];
-  }
-  for (const bowler of bowling) {
-    bowlingTracker = [
-      ...bowlingTracker,
-      {
-        playerInitials: bowler.playerInitials,
-        balls: 0,
-        runs: 0,
-        ballLog: [],
-        overs: 0,
-        wickets: 0,
-        openingOverRate:
-          bowler.oversData[0] /
-          (bowler.oversData[0] + bowler.oversData[9] + bowler.oversData[18]),
-        middleOverRate:
-          bowler.oversData[9] /
-          (bowler.oversData[0] + bowler.oversData[9] + bowler.oversData[18]),
-        deathOverRate:
-          bowler.oversData[18] /
-          (bowler.oversData[0] + bowler.oversData[9] + bowler.oversData[18]),
-        catchRate: bowler.catches / bowler.matches,
-        wideRate: bowler.bowlWides / (bowler.bowlBallsTotal + 1),
-        bowlOutsTotal: bowler.bowlOutsTotal,
-        bowlOutsRate: bowler.bowlOutsTotal / bowler.matches,
-        overNumbersObject: bowler.oversData,
-      },
-    ];
-  }
-
-  console.log(bowlingTracker);
-
-  const bowlers = [...bowlingTracker].sort(
-    (a, b) => b.bowlOutsTotal - a.bowlOutsTotal
-  );
-
-  bowlers.splice(6);
-
-  bowlers.forEach((bowler) => {
-    bowler.openingOverRate =
-      bowler.bowlOutsRate *
-      (bowler.overNumbersObject[0] /
-        (bowler.overNumbersObject[0] +
-          bowler.overNumbersObject[9] +
-          bowler.overNumbersObject[18]));
-
-    bowler.middleOverRate =
-      bowler.bowlOutsRate *
-      (bowler.overNumbersObject[9] /
-        (bowler.overNumbersObject[0] +
-          bowler.overNumbersObject[9] +
-          bowler.overNumbersObject[18]));
-    bowler.deathOverRate =
-      bowler.bowlOutsRate *
-      (bowler.overNumbersObject[18] /
-        (bowler.overNumbersObject[0] +
-          bowler.overNumbersObject[9] +
-          bowler.overNumbersObject[18]));
-  });
-
-  openingBowlers = [...bowlers].sort(
-    (a, b) => b.openingOverRate - a.openingOverRate
-  );
-  middleBowlers = [...bowlers].sort(
-    (a, b) => b.middleOverRate - a.middleOverRate
-  );
-
-  deathBowlers = [...bowlers].sort((a, b) => b.deathOverRate - a.deathOverRate);
-
-  let i = 0;
-
-  console.log(openingBowlers, middleBowlers, deathBowlers);
-
-  batter1 = battingTracker[0];
-  batter2 = battingTracker[1];
-  let onStrike = batter1;
-
-  let bowler1 = openingBowlers[0];
-  let bowler2 = openingBowlers[1];
-
-  console.log(batter1, batter2);
-
-  while (i < 20) {
-    if (i !== 0) {
-      onStrike =
-        onStrike.playerInitials === batter1.playerInitials ? batter2 : batter1;
-    }
-    if (i === 0) {
-      let overBowler = bowler1;
-      let n = 0;
-      console.log(bowler1.playerInitials, " comes into the attack");
-
-      while (balls < 6) {
-        if (wickets === 10) {
-          break;
-        } else {
-          delivery(overBowler, onStrike, `${i}.${n + 1}`);
-          n++;
-        }
-        lastOver = overBowler.playerInitials;
-      }
-    } else if (i === 1) {
-      let overBowler = bowler2;
-      let n = 0;
-      console.log(bowler2.name, " comes into the attack");
-
-      while (balls < 12) {
-        if (wickets === 10) {
-          break;
-        } else {
-          delivery(overBowler, onStrike, `${i}.${n + 1}`);
-          n++;
-        }
-      }
-      lastOver = overBowler.playerInitials;
-    } else if (i < 6) {
-      if (i % 2 === 1) {
-        bowler2 = getPowerplayBowler(bowler2);
-        currBowler = bowler2;
-      } else {
-        bowler1 = getPowerplayBowler(bowler1);
-        currBowler = bowler1;
-      }
-      let n = 0;
-
-      while (balls < (i + 1) * 6) {
-        if (wickets === 10) {
-          break;
-        } else {
-          delivery(currBowler, onStrike, `${i}.${n + 1}`);
-          n++;
-        }
-      }
-      lastOver = currBowler.playerInitials;
-    } else if (i < 15) {
-      if (i % 2 === 1) {
-        bowler2 = getMiddleBowler(bowler2);
-        currBowler = bowler2;
-      } else {
-        bowler1 = getMiddleBowler(bowler1);
-        currBowler = bowler1;
-      }
-      let n = 0;
-
-      while (balls < (i + 1) * 6) {
-        if (wickets === 10) {
-          break;
-        } else {
-          delivery(currBowler, onStrike, `${i}.${n + 1}`);
-          n++;
-        }
-      }
-      lastOver = currBowler.playerInitials;
-    } else {
-      if (i % 2 === 1) {
-        bowler2 = getDeathBowler(bowler2);
-        currBowler = bowler2;
-      } else {
-        bowler1 = getDeathBowler(bowler1);
-        currBowler = bowler1;
-      }
-      let n = 0;
-
-      while (balls < (i + 1) * 6) {
-        if (wickets === 10) {
-          break;
-        } else {
-          delivery(currBowler, onStrike, `${i}.${n + 1}`);
-          n++;
-        }
-      }
-      lastOver = currBowler.playerInitials;
-    }
-    i++;
-  }
-};
