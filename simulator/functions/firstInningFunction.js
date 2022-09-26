@@ -16,6 +16,20 @@ let runs = 0;
 let runRate;
 let total;
 
+const playerDismissed = (player) => {
+  if (wickets === 10) {
+    console.log("All Out");
+  } else {
+    if (batter1 === player) {
+      onStrike = battingTracker[wickets + 1];
+      batter1 = battingTracker[wickets + 1];
+    } else {
+      onStrike = battingTracker[wickets + 1];
+      batter2 = battingTracker[wickets + 1];
+    }
+  }
+};
+
 const delivery = (over) => {
   balls += 1;
   const { playerInitials: batterName } = onStrike;
@@ -255,14 +269,59 @@ const delivery = (over) => {
             let probOut = outAvg * (total / den[0]);
             let outDecider = Math.random(1);
 
-            if(probOut > outDecider){
-                wickets += 1
-                let outType;
-                let probsOut = [];
-                let totalOut = 0;
-                let lastOut = 0;
+            if (probOut > outDecider) {
+              wickets += 1;
+              let outType;
+              let probsOut = [];
+              let totalOut = 0;
+              let lastOut = 0;
 
-                
+              let outProb = Math.random(1);
+
+              if (outProb < 0.03) {
+                outType = "Stumped";
+              } else if (outProb < 0.09) {
+                outType = "LBW";
+              } else if (outProb < 0.18) {
+                outType = "Run Out";
+              } else if (outProb < 0.39) {
+                outType = "Bowled";
+              } else {
+                outType = "Caught";
+              }
+
+              switch (outType) {
+                case "Run Out":
+                  let runOutRuns = Math.floor(Math.random(0, 2));
+                  runs += runOutRuns;
+                  const event = `${over} ${bowlerName} to ${batterName} ${runOutRuns} Score: ${runs}/${wickets}, ${outType}`;
+                  const ballInfo = `${balls}:W${runOutRuns}-runout`;
+                  overBowler.runs += runOutRuns;
+                  overBowler.ballLog = [...overBowler.ballLog, ballInfo];
+                  overBowler.balls += 1;
+                  onStrike.runs += runOutRuns;
+                  onStrike.ballLog = [...onStrike.ballLog, ballInfo];
+                  onStrike.balls += 1;
+                  innings = [
+                    ...innings,
+                    {
+                      event: event,
+                      balls: balls,
+                      battingTracker: battingTracker,
+                      bowlingTracker: bowlingTracker,
+                      batsman: batterName,
+                      batter1: batter1.playerInitials,
+                      batter2: batter2.playerInitials,
+                      bowler: bowlerName,
+                      runs: runs,
+                      wickets: wickets,
+                    },
+                  ];
+                  playerDismissed(onStrike);
+                  return;
+                case "Caught":
+                  
+              }
             }
           }
         }
