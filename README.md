@@ -32,3 +32,26 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+# Reading Notes
+
+## This is basically anything I learn during the making of the project
+
+- ### 1. findIndex method
+  The findIndex allows you to get index of the element from the array.
+- ### 2. making copies of array
+
+  Whenever we try to make copies of array for example sorting it with 3 different copies. We would need to make another copy for it. For Example -
+
+  ```js
+  const openingBowlers = [...bowlers].sort(
+    (a, b) => b.openingOverRate - a.openingOverRate
+  );
+  const middleBowlers = [...bowlers].sort(
+    (a, b) => b.middleOverRate - a.middleOverRate
+  );
+  const deathBowlers = [...bowlers].sort(
+    (a, b) => b.deathOverRate - a.deathOverRate
+  );
+  ```
+

@@ -16,22 +16,18 @@ export const simulator = (teams) => {
   const battingFirst = doToss(secondInnDew, pitchDetoriate, team1, team2);
 
   const firstInningsData =
-    battingFirst === 0
+    battingFirst === 1
       ? [teams[0].team, teams[1].team, teams[0].name, teams[1].name]
       : [teams[1].team, teams[0].team, teams[1].name, teams[0].name];
   const secondInningsData =
-    battingFirst === 0
+    battingFirst === 1
       ? [teams[1].team, teams[0].team, teams[1].name, teams[0].name]
       : [teams[0].team, teams[1].team, teams[0].name, teams[1].name];
-
-  console.log(firstInningsData, secondInningsData)
   firstInnings(
     firstInningsData[0],
     firstInningsData[1],
     firstInningsData[2],
-    firstInningsData[3],
-    pitchInfo[0],
-    pitchInfo[1]
+    firstInningsData[3]
   );
 
   secondInnings(
