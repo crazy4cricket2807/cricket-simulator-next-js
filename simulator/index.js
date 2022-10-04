@@ -23,7 +23,7 @@ export const simulator = (teams) => {
     battingFirst === 1
       ? [teams[1].team, teams[0].team, teams[1].name, teams[0].name]
       : [teams[0].team, teams[1].team, teams[0].name, teams[1].name];
-  firstInnings(
+  const firstInningsOutput = firstInnings(
     firstInningsData[0],
     firstInningsData[1],
     firstInningsData[2],
@@ -38,4 +38,6 @@ export const simulator = (teams) => {
     pitchInfo[0],
     pitchInfo[1]
   );
+
+  return firstInningsOutput;
 };

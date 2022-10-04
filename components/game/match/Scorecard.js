@@ -3,16 +3,10 @@ import Image from "next/image";
 import miLogo from "../../../styles/images/mi.jpg";
 import cskLogo from "../../../styles/images/csk.jpg";
 import { useSelector } from "react-redux";
-import { simulator } from "./../../../simulator/index";
+
 
 function Scorecard() {
-  const teams = useSelector((state) => state.playerReducer);
-
-  useEffect(() => {
-    if (teams.length > 0) {
-      simulator(teams);
-    }
-  }, [teams]);
+  
   return (
     <div className="flex justify-between w-full bg-white">
       <div className="flex items-center justify-between w-1/3">

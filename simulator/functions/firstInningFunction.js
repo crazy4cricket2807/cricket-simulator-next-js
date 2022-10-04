@@ -2,7 +2,7 @@ let battingTracker = [];
 let bowlingTracker = [];
 let innings = [];
 let ballLog = [];
-let denAvg = [0, 0, 0, 0, 0, 0, 0];
+let denAvg = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
 let denominationProbabilites = [];
 let onStrike;
 let batter1;
@@ -28,7 +28,7 @@ const getOutcome = (outAvg, over) => {
     const ballInfo = `${balls}:WD`;
     console.log(event);
 
-    ballLog.append(ballInfo);
+    ballLog = [...ballLog, ballInfo];
     overBowler.runs += 1;
     overBowler.ballLog = [...overBowler.ballLog, ballInfo];
     innings = [
@@ -44,6 +44,7 @@ const getOutcome = (outAvg, over) => {
         bowler: bowlerName,
         runs: runs,
         wickets: wickets,
+        ballInfo: ballInfo,
       },
     ];
     return;
@@ -53,7 +54,6 @@ const getOutcome = (outAvg, over) => {
     denAvg.forEach((den, index) => {
       total += parseInt(den);
     });
-    console.log(denAvg, total);
     let last = 0;
     let denominationProbabilites = [];
     denAvg.forEach((den, index) => {
@@ -61,8 +61,8 @@ const getOutcome = (outAvg, over) => {
       denominationProbabilites = [...denominationProbabilites, denObj];
       last += den;
     });
-    let decider = Math.random(0, total);
-    console.log(decider);
+    let decider = total * Math.random(1);
+    console.log(total, decider, denominationProbabilites);
 
     for (const prob of denominationProbabilites) {
       if (prob.start <= decider && prob.end > decider) {
@@ -90,6 +90,7 @@ const getOutcome = (outAvg, over) => {
               bowler: bowlerName,
               runs: runs,
               wickets: wickets,
+              ballInfo: ballInfo,
             },
           ];
           ballLog = [...ballLog, ballInfo];
@@ -147,13 +148,14 @@ const getOutcome = (outAvg, over) => {
                     event: event,
                     balls: balls,
                     battingTracker: battingTracker,
-                    bowlingTracker: bowlerTracker,
+                    bowlingTracker: bowlingTracker,
                     batsman: batterName,
                     batter1: batter1.playerInitials,
                     batter2: batter2.playerInitials,
                     bowler: bowlerName,
                     runs: runs,
                     wickets: wickets,
+                    ballInfo: ballInfo,
                   },
                 ];
                 playerDismissed(onStrike);
@@ -180,13 +182,14 @@ const getOutcome = (outAvg, over) => {
                     event: event,
                     balls: balls,
                     battingTracker: battingTracker,
-                    bowlingTracker: bowlerTracker,
+                    bowlingTracker: bowlingTracker,
                     batsman: batterName,
                     batter1: batter1.playerInitials,
                     batter2: batter2.playerInitials,
                     bowler: bowlerName,
                     runs: runs,
                     wickets: wickets,
+                    ballInfo: ballInfo,
                   },
                 ];
                 playerDismissed(onStrike);
@@ -212,13 +215,14 @@ const getOutcome = (outAvg, over) => {
                     event: event,
                     balls: balls,
                     battingTracker: battingTracker,
-                    bowlingTracker: bowlerTracker,
+                    bowlingTracker: bowlingTracker,
                     batsman: batterName,
                     batter1: batter1.playerInitials,
                     batter2: batter2.playerInitials,
                     bowler: bowlerName,
                     runs: runs,
                     wickets: wickets,
+                    ballInfo: ballInfo,
                   },
                 ];
                 playerDismissed(onStrike);
@@ -250,6 +254,7 @@ const getOutcome = (outAvg, over) => {
                 bowler: bowlerName,
                 runs: runs,
                 wickets: wickets,
+                ballInfo: ballInfo,
               },
             ];
             playerDismissed(onStrike);
@@ -279,20 +284,30 @@ const playerDismissed = (player) => {
 const delivery = (over) => {
   const outAvg = (onStrike.batOutsRate + overBowler.bowlOutsRate) / 2;
 
-  let adjustLast10;
+  let sumLast10 = 0;
+  let outsLast10 = 0;
+  for (const ball of ballLog) {
+    if (!ball.includes("W")) {
+      outsLast10 += 1;
+    }
+  }
+
+  let adjustLast10 = 0;
   if (balls < 105) {
     adjustLast10 = 0.02 + Math.random(0.02);
-    denAvg[0] -= adjustLast10 * (1 / 2);
-    denAvg[1] -= adjustLast10 * (1 / 2);
-    denAvg[2] += adjustLast10 * (1 / 2);
-    denAvg[4] += adjustLast10 * (1 / 2);
-  } else {
-    adjustLast10 += 0.018;
-    denAvg[0] += adjustLast10 * (1.1 / 2);
-    denAvg[1] += adjustLast10 * (0.9 / 2);
-    denAvg[4] -= adjustLast10 * (1 / 2);
-    denAvg[6] -= adjustLast10 * (1 / 2);
-    outAvg -= 0.02;
+    if (outsLast10 < 2) {
+      denAvg[0] -= adjustLast10 * (1 / 2);
+      denAvg[1] -= adjustLast10 * (1 / 2);
+      denAvg[2] += adjustLast10 * (1 / 2);
+      denAvg[4] += adjustLast10 * (1 / 2);
+    } else {
+      adjustLast10 += 0.018;
+      denAvg[0] += adjustLast10 * (1.1 / 2);
+      denAvg[1] += adjustLast10 * (0.9 / 2);
+      denAvg[4] -= adjustLast10 * (1 / 2);
+      denAvg[6] -= adjustLast10 * (1 / 2);
+      outAvg -= 0.02;
+    }
   }
   if (onStrike.balls < 8 && balls < 80) {
     let adjust = Math.random(0.03) - 0.01;
@@ -328,7 +343,7 @@ const delivery = (over) => {
 
   if (
     onStrike.balls > 30 &&
-    onStrike.runs / onStrike.balls > 145 &&
+    onStrike.runs / onStrike.balls > 1.45 &&
     (wickets < 5 || balls > 102)
   ) {
     let adjust = Math.random(0.03) + 0.06;
@@ -591,5 +606,5 @@ export const firstInnings = (...params) => {
     i += 1;
   }
 
-  console.log(innings);
+  return innings;
 };

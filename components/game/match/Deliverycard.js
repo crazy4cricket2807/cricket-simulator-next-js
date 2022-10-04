@@ -2,6 +2,7 @@ import React from "react";
 import classNames from "classnames";
 
 function Deliverycard({ result }) {
+  console.log(result);
   return (
     <div className="bg-white flex justify-between items-center px-5 border my-2">
       <p className="font-thin">over number</p>
