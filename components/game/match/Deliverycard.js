@@ -3,31 +3,33 @@ import classNames from "classnames";
 
 function Deliverycard({ result }) {
   console.log(result);
+  const deliveryResult = result.ballInfo.split(":");
+  console.log(deliveryResult);
   return (
     <div className="bg-white flex justify-between items-center px-5 border my-2">
-      <p className="font-thin">over number</p>
+      <p className="font-thin">{result.event.slice(0, 4)}</p>
       <span
         className={classNames(
           "flex items-center justify-center h-12 w-12 font-medium",
           {
-            "bg-gray-200 ": result,
-            "text-white bg-teal-900": result === "4",
-            "text-white bg-purple-900": result === "6",
-            "text-white bg-red-900": result === "W",
+            "bg-gray-200 ": deliveryResult[1],
+            "text-white bg-teal-900": deliveryResult[1] === "4",
+            "text-white bg-purple-900": deliveryResult[1] === "6",
+            "text-white bg-red-900": deliveryResult[1] === "W",
           }
         )}
       >
-        {result === "0" ? "." : result}
+        {deliveryResult[1] === "0" ? "." : deliveryResult[1]}
       </span>
       <p className="flex w-1/2">
-        Bowler to Batsman,{" "}
-        {result === "W"
+        {result.bowler} to {result.batsman},{" "}
+        {deliveryResult[0] === "W"
           ? "OUT"
-          : result === "1"
-          ? `${result} Run`
-          : `${result} Runs`}
+          : deliveryResult[1] === "1"
+          ? `${deliveryResult[1]} Run`
+          : `${deliveryResult[1]} Runs`}
       </p>
-      <p className="flex justify-center">Score-Wickets(Overs)</p>
+      <p className="flex justify-center">{`${result.runs} - ${result.wickets}`}</p>
     </div>
   );
 }

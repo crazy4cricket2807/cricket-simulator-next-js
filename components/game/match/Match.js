@@ -24,7 +24,7 @@ function Match() {
           <Deliverycard result={result} key={index} />
         ))}
       </div>
-      <Scorecard />
+      <Scorecard result={results} />
     </div>
   );
 }
